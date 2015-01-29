@@ -1,11 +1,12 @@
 127.0.0.1       localhost
-10.110.55.40  storm.nimbus
-10.110.55.41  storm.supervisor1
-10.110.55.42  storm.supervisor2
-10.110.55.43  storm.supervisor3
-10.110.55.44  storm.supervisor4
-10.110.55.45  storm.supervisor5
-10.110.55.46  storm.zookeeper1
-10.110.55.47  storm.zookeeper2
-10.110.55.48  storm.zookeeper3
-10.110.55.49  storm.zookeeper4
+10.110.55.40  nimbus
+10.110.55.41  supervisor1
+10.110.55.42  supervisor2
+10.110.55.43  supervisor3
+10.110.55.44  supervisor4
+10.110.55.45  supervisor5
+10.110.55.46  zookeeper1
+10.110.55.47  zookeeper2
+10.110.55.48  zookeeper3
+10.110.55.49  zookeeper4
+
