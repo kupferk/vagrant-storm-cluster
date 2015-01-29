@@ -66,7 +66,7 @@ Vagrant.configure("2") do |config|
   	  end
   	  
   	  # Ask puppet to do the provisioning now.
-  	  node.vm.provision :shell, :inline => "puppet apply /tmp/storm-puppet/manifests/site.pp --verbose --modulepath=/tmp/storm-puppet/modules/ --debug"	
+  	  node.vm.provision :shell, :inline => "puppet apply /tmp/storm-cluster-puppet/manifests/site.pp --verbose --modulepath=/tmp/storm-cluster-puppet/modules/ --debug"	
       
     end
   end
