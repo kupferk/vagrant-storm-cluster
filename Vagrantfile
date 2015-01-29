@@ -44,7 +44,8 @@ Vagrant.configure("2") do |config|
       
       node.vm.provider :lxc do |lxc|
       	node.vm.box = "fgrehm/trusty64-lxc"
-        node.vm.network :private_network, ip: opts[:ip]
+   	    node.vm.box_url = "https://atlas.hashicorp.com/fgrehm/boxes/trusty64-lxc/versions/1.2.0/providers/lxc.box"
+        # node.vm.network :private_network, ip: opts[:ip]
         lxc.container_name = node.vm.hostname
         lxc.customize 'cgroup.memory.limit_in_bytes', opts[:memory].to_s + "M"
       end
