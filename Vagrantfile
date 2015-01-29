@@ -50,8 +50,9 @@ Vagrant.configure("2") do |config|
         # override.vm.network :private_network, ip: opts[:ip], lxc__bridge_name: LXC_BRIDGE
         lxc.container_name = node.vm.hostname
         lxc.customize 'cgroup.memory.limit_in_bytes', opts[:memory].to_s + "M"
+        lxc.customize 'network.type', 'veth'
         lxc.customize 'network.link', LXC_BRIDGE
-        lxc.customize 'network.hwadr', opts[:mac].to_s
+        lxc.customize 'network.hwaddr', opts[:mac].to_s
       end
 
       node.vm.provision :shell, :inline => "hostname storm.%s" % opts[:name].to_s
