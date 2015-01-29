@@ -59,7 +59,7 @@ Vagrant.configure("2") do |config|
       node.vm.provision :shell, :inline => "cp -fv /vagrant_data/hosts /etc/hosts"
       node.vm.provision :shell, :inline => "apt-get update"
       node.vm.provision :shell, :inline => "apt-get --yes --force-yes install puppet"
-      node.vm.provision :shell, :inline => "puppet module install puppetlabs-vcsrepo"
+      node.vm.provision :shell, :inline => "puppet module install --force puppetlabs-vcsrepo"
       
       node.vm.provision :puppet do |puppet|
     	puppet.manifests_path = "manifests"
