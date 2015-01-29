@@ -2,7 +2,7 @@
 # provisioning from the correct repos. The VM can then provision itself from there. 
 
 $CLONE_URL = "https://github.com/kupferk/storm-cluster-puppet.git"
-$CHECKOUT_DIR="/tmp/storm-puppet"
+$CHECKOUT_DIR="/tmp/storm-cluster-puppet"
 
 
 $rubygems = $operatingsystem ? {
@@ -20,27 +20,28 @@ package {$rubygems:ensure=> [latest,installed], alias=>"rubygems"}
 
 exec { "install_hiera":
 	command => "gem install hiera hiera-puppet",
-    path => "/usr/bin",
+    path => ["/bin","/usr/bin"],
     require => Package['rubygems'],
 }
 
 exec { "clone_config":
 	command => "git clone ${CLONE_URL}",
 	cwd => "/tmp",
-    path => "/usr/bin",
+    path => ["/bin","/usr/bin"],
     creates => "${CHECKOUT_DIR}",
+    onlyif => "test ! -d ${CHECKOUT_DIR}",
     require => Package['git'],
 }
 
 exec { "update_config":
 	command => "git pull",
 	cwd => "${CHECKOUT_DIR}",
-    path => "/usr/bin",
-    require => Package['git'], Exec['clone_config']
+    path => ["/bin","/usr/bin"],
+    require => [Package['git'], Exec['clone_config']]
 }
   
-exec {"/bin/ln -f -s /var/lib/gems/1.8/gems/hiera-puppet-1.0.0/ /tmp/storm-puppet/modules/hiera-puppet":
-	creates => "/tmp/storm-puppet/modules/hiera-puppet",
+exec {"/bin/ln -f -s /var/lib/gems/1.8/gems/hiera-puppet-1.0.0/ ${CHECKOUT_DIR}/modules/hiera-puppet":
+	creates => "${CHECKOUT_DIR}/modules/hiera-puppet",
 	require => [Exec['update_config'],Exec['install_hiera']]
 }
 
