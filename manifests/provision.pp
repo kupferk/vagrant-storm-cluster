@@ -24,26 +24,18 @@ exec { "install_hiera":
     require => Package['rubygems'],
 }
 
-exec { "clone_config":
-	command => "git clone ${CLONE_URL}",
-	cwd => "/tmp",
-    path => ["/bin","/usr/bin"],
-    creates => "${CHECKOUT_DIR}",
-    onlyif => "test ! -d ${CHECKOUT_DIR}",
-    require => Package['git'],
-}
-
-exec { "update_config":
-	command => "git pull",
-	cwd => "${CHECKOUT_DIR}",
-    path => ["/bin","/usr/bin"],
-    require => [Package['git'], Exec['clone_config']]
+vcsrepo { "config":
+    path     => "${CHECKOUT_DIR}"
+	source   => "$CLONE_URL",
+	revision => 'master',
+	ensure   => latest,
+    provider => git,
 }
   
-exec {"/bin/ln -f -s /var/lib/gems/1.8/gems/hiera-puppet-1.0.0/ ${CHECKOUT_DIR}/modules/hiera-puppet":
-	creates => "${CHECKOUT_DIR}/modules/hiera-puppet",
-	require => [Exec['update_config'],Exec['install_hiera']]
-}
+#exec {"/bin/ln -f -s /var/lib/gems/1.8/gems/hiera-puppet-1.0.0/ ${CHECKOUT_DIR}/modules/hiera-puppet":
+#	creates => "${CHECKOUT_DIR}/modules/hiera-puppet",
+#	require => [Exec['update_config'],Exec['install_hiera']]
+#}
 
 
 #install hiera and the storm configuration
@@ -61,6 +53,6 @@ file { "/etc/puppet/hieradata":
 file {"/etc/puppet/hieradata/storm.yaml": 
 	source => "${CHECKOUT_DIR}/modules/storm.yaml",
     replace => true,
-    require => [Exec['update_config'],File['/etc/puppet/hieradata']]
+    require => [Vcsrepo['config'],File['/etc/puppet/hieradata']]
 }
 
