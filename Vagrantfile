@@ -2,14 +2,16 @@
 # vi: set ft=ruby :
 
 boxes = [
-  { :name => :nimbus, :ip => '10.110.55.40', :cpus =>2, :memory => 512, :instance => 'm1.small' },
-  { :name => :supervisor1, :ip => '10.110.55.41', :cpus =>4, :memory => 1024, :instance => 'm1.medium' },
-  { :name => :supervisor2, :ip => '10.110.55.42', :cpus =>4, :memory => 1024, :instance => 'm1.medium' },
-  { :name => :zookeeper1, :ip => '10.110.55.46', :cpus =>1, :memory => 1024, :instance => 'm1.small' },
+  { :name => :nimbus, :ip => '10.110.55.40', :cpus =>2, :memory => 512, :instance => 'm1.small', :mac => '00:16:3e:33:44:40' },
+  { :name => :supervisor1, :ip => '10.110.55.41', :cpus =>4, :memory => 1024, :instance => 'm1.medium', :mac => '00:16:3e:33:44:41' },
+  { :name => :supervisor2, :ip => '10.110.55.42', :cpus =>4, :memory => 1024, :instance => 'm1.medium', :mac => '00:16:3e:33:44:42' },
+  { :name => :zookeeper1, :ip => '10.110.55.46', :cpus =>1, :memory => 1024, :instance => 'm1.small', :mac => '00:16:3e:33:44:46' },
 ]
 
 AWS_REGION = ENV['AWS_REGION'] || "ap-southeast-2"
 AWS_AMI    = ENV['AWS_AMI']    || "ami-97e675ad"
+LXC_BRIDGE = 'lxcbr0'
+
 
 Vagrant.configure("2") do |config|
 
@@ -20,7 +22,6 @@ Vagrant.configure("2") do |config|
       node.vm.synced_folder "./data", "/vagrant_data"
   	  node.vm.box = "trusty64"
       node.vm.box_url = "http://files.vagrantup.com/trusty64.box"
-      node.vm.network :private_network, ip: opts[:ip], lxc__bridge_name: 'lxcbr0'
       
       node.vm.provider :aws do |aws, override|
         override.vm.box = "dummy"
@@ -37,6 +38,7 @@ Vagrant.configure("2") do |config|
   	  end
       
       node.vm.provider :virtualbox do |vb, override|
+        override.vm.network :private_network, ip: opts[:ip]
         vb.name = "storm.%s" % opts[:name].to_s
         vb.customize ["modifyvm", :id, "--memory", opts[:memory]]
         vb.customize ["modifyvm", :id, "--cpus", opts[:cpus] ] if opts[:cpus]
@@ -45,8 +47,11 @@ Vagrant.configure("2") do |config|
       node.vm.provider :lxc do |lxc, override|
       	override.vm.box = "fgrehm/trusty64-lxc"
    	    override.vm.box_url = "https://atlas.hashicorp.com/fgrehm/boxes/trusty64-lxc/versions/1.2.0/providers/lxc.box"
+        # override.vm.network :private_network, ip: opts[:ip], lxc__bridge_name: LXC_BRIDGE
         lxc.container_name = node.vm.hostname
         lxc.customize 'cgroup.memory.limit_in_bytes', opts[:memory].to_s + "M"
+        lxc.customize 'network.link', LXC_BRIDGE
+        lxc.customize 'network.hwadr', opts[:mac].to_s
       end
 
       node.vm.provision :shell, :inline => "hostname storm.%s" % opts[:name].to_s
