@@ -42,7 +42,7 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--cpus", opts[:cpus] ] if opts[:cpus]
       end
       
-      config.vm.provider :lxc do |vb|
+      config.vm.provider :lxc do |lxc|
       	config.vm.box = "fgrehm/trusty64-lxc"
         config.vm.network :private_network, ip: opts[:ip]
         lxc.container_name = config.vm.hostname
