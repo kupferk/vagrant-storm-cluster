@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
   boxes.each do |opts|
   	config.vm.define opts[:name] do |node|
   	  
-      node.vm.hostname = "storm.%s" % opts[:name].to_s   			
+      node.vm.hostname = opts[:name].to_s   			
       node.vm.synced_folder "./data", "/vagrant_data"
   	  node.vm.box = "trusty64"
       node.vm.box_url = "http://files.vagrantup.com/trusty64.box"
@@ -48,7 +48,7 @@ Vagrant.configure("2") do |config|
       	override.vm.box = "fgrehm/trusty64-lxc"
    	    override.vm.box_url = "https://atlas.hashicorp.com/fgrehm/boxes/trusty64-lxc/versions/1.2.0/providers/lxc.box"
         # override.vm.network :private_network, ip: opts[:ip], lxc__bridge_name: LXC_BRIDGE
-        lxc.container_name = node.vm.hostname
+        lxc.container_name = "storm.%s" % opts[:name].to_s
         lxc.customize 'cgroup.memory.limit_in_bytes', opts[:memory].to_s + "M"
         lxc.customize 'network.type', 'veth'
         lxc.customize 'network.link', LXC_BRIDGE
