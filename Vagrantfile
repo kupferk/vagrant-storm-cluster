@@ -14,13 +14,13 @@ AWS_AMI    = ENV['AWS_AMI']    || "ami-97e675ad"
 Vagrant.configure("2") do |config|
 
   boxes.each do |opts|
-  	config.vm.define opts[:name] do |config|
+  	config.vm.define opts[:name] do |node|
   	  
-      config.vm.hostname = "storm.%s" % opts[:name].to_s   			
-      config.vm.synced_folder "./data", "/vagrant_data"
+      node.vm.hostname = "storm.%s" % opts[:name].to_s   			
+      node.vm.synced_folder "./data", "/vagrant_data"
       
-      config.vm.provider :aws do |aws, override|
-        config.vm.box = "dummy"
+      node.vm.provider :aws do |aws, override|
+        node.vm.box = "dummy"
     	aws.access_key_id = ""
     	aws.secret_access_key = ""
     	aws.keypair_name = ""
@@ -33,35 +33,36 @@ Vagrant.configure("2") do |config|
     	aws.instance_type = opts[:instance]
   	  end
       
-      config.vm.provider :virtualbox do |vb|
-      	config.vm.box = "trusty64"
-   	    config.vm.box_url = "http://files.vagrantup.com/trusty64.box"
-        config.vm.network :private_network, ip: opts[:ip]
+      node.vm.provider :virtualbox do |vb|
+      	node.vm.box = "trusty64"
+   	    node.vm.box_url = "http://files.vagrantup.com/trusty64.box"
+        node.vm.network :private_network, ip: opts[:ip]
         vb.name = "storm.%s" % opts[:name].to_s
         vb.customize ["modifyvm", :id, "--memory", opts[:memory]]
         vb.customize ["modifyvm", :id, "--cpus", opts[:cpus] ] if opts[:cpus]
       end
       
-      config.vm.provider :lxc do |lxc|
-      	config.vm.box = "fgrehm/trusty64-lxc"
-        config.vm.network :private_network, ip: opts[:ip]
-        lxc.container_name = config.vm.hostname
+      node.vm.provider :lxc do |lxc|
+      	node.vm.box = "fgrehm/trusty64-lxc"
+        node.vm.network :private_network, ip: opts[:ip]
+        lxc.container_name = node.vm.hostname
         lxc.customize 'cgroup.memory.limit_in_bytes', opts[:memory].to_s + "M"
       end
 
-      config.vm.provision :shell, :inline => "hostname storm.%s" % opts[:name].to_s
-      config.vm.provision :shell, :inline => "cp -fv /vagrant_data/hosts /etc/hosts"
-      config.vm.provision :shell, :inline => "apt-get update"
-      config.vm.provision :shell, :inline => "apt-get --yes --force-yes install puppet"
+      node.vm.provision :shell, :inline => "hostname storm.%s" % opts[:name].to_s
+      node.vm.provision :shell, :inline => "cp -fv /vagrant_data/hosts /etc/hosts"
+      node.vm.provision :shell, :inline => "apt-get update"
+      node.vm.provision :shell, :inline => "apt-get --yes --force-yes install puppet"
       
-      config.vm.provision :puppet do |puppet|
+      node.vm.provision :puppet do |puppet|
     	puppet.manifests_path = "manifests"
     	puppet.manifest_file = "provision.pp"
   	  end
   	  
   	  # Ask puppet to do the provisioning now.
-  	  config.vm.provision :shell, :inline => "puppet apply /tmp/storm-puppet/manifests/site.pp --verbose --modulepath=/tmp/storm-puppet/modules/ --debug"	
+  	  node.vm.provision :shell, :inline => "puppet apply /tmp/storm-puppet/manifests/site.pp --verbose --modulepath=/tmp/storm-puppet/modules/ --debug"	
       
     end
   end
 end
+
