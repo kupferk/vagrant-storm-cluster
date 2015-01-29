@@ -54,16 +54,9 @@ Vagrant.configure("2") do |config|
       config.vm.provision :shell, :inline => "apt-get update"
       config.vm.provision :shell, :inline => "apt-get --yes --force-yes install puppet"
       
-      if File.exist?("./data/jdk-6u35-linux-x64.bin") then
-    	config.vm.provision :puppet do |puppet|
-    	  puppet.manifests_path = "manifests"
-    	  puppet.manifest_file = "jdk.pp"
-  	    end
-      end
-      
       config.vm.provision :puppet do |puppet|
     	puppet.manifests_path = "manifests"
-    	puppet.manifest_file = "provisioningInit.pp"
+    	puppet.manifest_file = "provision.pp"
   	  end
   	  
   	  # Ask puppet to do the provisioning now.
