@@ -32,12 +32,6 @@ vcsrepo { "config":
     provider => git,
 }
   
-#exec {"/bin/ln -f -s /var/lib/gems/1.8/gems/hiera-puppet-1.0.0/ ${CHECKOUT_DIR}/modules/hiera-puppet":
-#	creates => "${CHECKOUT_DIR}/modules/hiera-puppet",
-#	require => [Exec['update_config'],Exec['install_hiera']]
-#}
-
-
 #install hiera and the storm configuration
 file { "/etc/puppet/hiera.yaml":
     source => "/vagrant_data/hiera.yaml",
