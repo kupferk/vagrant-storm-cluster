@@ -5,11 +5,18 @@ $CLONE_URL = "https://github.com/kupferk/storm-cluster-puppet.git"
 $CHECKOUT_DIR="/tmp/storm-puppet"
 
 
+$rubygems = $operatingsystem ? {
+        Ubuntu  => "rubygems-integration",
+        default => "rubygems",
+}
+
+
 package {git:ensure=> [latest,installed]}
 package {puppet:ensure=> [latest,installed]}
 package {ruby:ensure=> [latest,installed]}
-package {rubygems:ensure=> [latest,installed]}
 package {unzip:ensure=> [latest,installed]}
+package {$rubygems:ensure=> [latest,installed], alias=>"rubygems"}
+
 
 exec { "install_hiera":
 	command => "gem install hiera hiera-puppet",
@@ -17,17 +24,24 @@ exec { "install_hiera":
     require => Package['rubygems'],
 }
 
-exec { "clone_storm-puppet":
+exec { "clone_config":
 	command => "git clone ${CLONE_URL}",
 	cwd => "/tmp",
     path => "/usr/bin",
     creates => "${CHECKOUT_DIR}",
     require => Package['git'],
 }
+
+exec { "update_config":
+	command => "git pull",
+	cwd => "${CHECKOUT_DIR}",
+    path => "/usr/bin",
+    require => Package['git'], Exec['clone_config']
+}
   
-exec {"/bin/ln -s /var/lib/gems/1.8/gems/hiera-puppet-1.0.0/ /tmp/storm-puppet/modules/hiera-puppet":
+exec {"/bin/ln -f -s /var/lib/gems/1.8/gems/hiera-puppet-1.0.0/ /tmp/storm-puppet/modules/hiera-puppet":
 	creates => "/tmp/storm-puppet/modules/hiera-puppet",
-	require => [Exec['clone_storm-puppet'],Exec['install_hiera']]
+	require => [Exec['update_config'],Exec['install_hiera']]
 }
 
 
@@ -46,6 +60,6 @@ file { "/etc/puppet/hieradata":
 file {"/etc/puppet/hieradata/storm.yaml": 
 	source => "${CHECKOUT_DIR}/modules/storm.yaml",
     replace => true,
-    require => [Exec['clone_storm-puppet'],File['/etc/puppet/hieradata']]
+    require => [Exec['update_config'],File['/etc/puppet/hieradata']]
 }
 
