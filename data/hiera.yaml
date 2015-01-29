@@ -1,6 +1,6 @@
 ---
 :hierarchy:
-    - %{operatingsystem}
+    - "%{operatingsystem}"
     - storm
 :backends:
     - yaml
