@@ -55,7 +55,7 @@ Vagrant.configure("2") do |config|
         lxc.customize 'network.hwaddr', opts[:mac].to_s
       end
 
-      node.vm.provision :shell, :inline => "hostname storm.%s" % opts[:name].to_s
+      node.vm.provision :shell, :inline => "hostname %s" % opts[:name].to_s
       node.vm.provision :shell, :inline => "cp -fv /vagrant_data/hosts /etc/hosts"
       node.vm.provision :shell, :inline => "apt-get update"
       node.vm.provision :shell, :inline => "apt-get --yes --force-yes install puppet"
