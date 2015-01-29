@@ -25,7 +25,7 @@ exec { "install_hiera":
 }
 
 vcsrepo { "config":
-    path     => "${CHECKOUT_DIR}"
+    path     => "${CHECKOUT_DIR}",
 	source   => "$CLONE_URL",
 	revision => 'master',
 	ensure   => latest,
