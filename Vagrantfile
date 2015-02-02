@@ -18,8 +18,7 @@ Vagrant.configure("2") do |config|
   boxes.each do |opts|
   	config.vm.define opts[:name] do |node|
   	  
-      node.vm.hostname = opts[:name].to_s   			
-      node.vm.synced_folder "./data", "/vagrant_data"
+      node.vm.hostname = opts[:name].to_s
   	  node.vm.box = "trusty64"
       node.vm.box_url = "http://files.vagrantup.com/trusty64.box"
       
@@ -56,19 +55,17 @@ Vagrant.configure("2") do |config|
       end
 
       node.vm.provision :shell, :inline => "hostname %s" % opts[:name].to_s
-      node.vm.provision :shell, :inline => "cp -fv /vagrant_data/hosts /etc/hosts"
+      node.vm.provision :shell, :inline => "cp -fv /vagrant/data/hosts /etc/hosts"
       node.vm.provision :shell, :inline => "apt-get update"
       node.vm.provision :shell, :inline => "apt-get --yes --force-yes install puppet"
-      node.vm.provision :shell, :inline => "puppet module install --force puppetlabs-vcsrepo"
+      node.vm.provision :shell, :inline => "puppet module install --force kupferk-zookeeper"
+      node.vm.provision :shell, :inline => "puppet module install --force kupferk-storm"
       
       node.vm.provision :puppet do |puppet|
     	puppet.manifests_path = "manifests"
     	puppet.manifest_file = "provision.pp"
+    	puppet.hiera_config_path = "hiera.yaml"
   	  end
-  	  
-  	  # Ask puppet to do the provisioning now.
-  	  node.vm.provision :shell, :inline => "puppet apply /tmp/storm-cluster-puppet/manifests/site.pp --verbose --modulepath=/tmp/storm-cluster-puppet/modules/ --debug"	
-      
     end
   end
 end
