@@ -11,12 +11,12 @@ class { 'storm':
 }
 
 node 'nimbus' {
-  class { 'storm::nimbus' }
-  class { 'storm::ui' }
+  class { 'storm::nimbus': }
+  class { 'storm::ui': }
 }
 
 node /supervisor[1-9]/ {
-  class { 'storm::supervisor' }
+  class { 'storm::supervisor': }
 }
 
 node /zookeeper[1-9]/ {
