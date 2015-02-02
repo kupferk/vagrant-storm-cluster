@@ -58,6 +58,7 @@ Vagrant.configure("2") do |config|
       node.vm.provision :shell, :inline => "cp -fv /vagrant/data/hosts /etc/hosts"
       node.vm.provision :shell, :inline => "apt-get update"
       node.vm.provision :shell, :inline => "apt-get --yes --force-yes install puppet"
+      node.vm.provision :shell, :inline => "puppet module install --force puppetlabs-java"
       node.vm.provision :shell, :inline => "puppet module install --force kupferk-zookeeper"
       node.vm.provision :shell, :inline => "puppet module install --force kupferk-storm"
       
