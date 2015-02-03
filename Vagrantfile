@@ -62,7 +62,7 @@ Vagrant.configure("2") do |config|
       # install librarian-puppet and run it to install puppet common modules.
       # This has to be done before puppet provisioning so that modules are available
       # when puppet tries to parse its manifests
-      config.vm.provision :shell, :path => "provision/shell/main.sh"
+      config.vm.provision :shell, :path => "provision/scripts/main.sh"
       
       node.vm.provision :puppet do |puppet|
     	puppet.manifests_path = "provision/puppet/manifests"
