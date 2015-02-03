@@ -3,8 +3,8 @@
 
 boxes = [
   { :name => :nimbus, :ip => '10.110.55.40', :cpus =>2, :memory => 512, :instance => 'm1.small', :mac => '00:16:3e:33:44:40' },
-  { :name => :supervisor1, :ip => '10.110.55.41', :cpus =>4, :memory => 1024, :instance => 'm1.medium', :mac => '00:16:3e:33:44:41' },
-  { :name => :supervisor2, :ip => '10.110.55.42', :cpus =>4, :memory => 1024, :instance => 'm1.medium', :mac => '00:16:3e:33:44:42' },
+  { :name => :supervisor1, :ip => '10.110.55.41', :cpus =>4, :memory => 4096, :instance => 'm1.medium', :mac => '00:16:3e:33:44:41' },
+  { :name => :supervisor2, :ip => '10.110.55.42', :cpus =>4, :memory => 4096, :instance => 'm1.medium', :mac => '00:16:3e:33:44:42' },
   { :name => :zookeeper1, :ip => '10.110.55.46', :cpus =>1, :memory => 1024, :instance => 'm1.small', :mac => '00:16:3e:33:44:46' },
 ]
 
