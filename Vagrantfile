@@ -58,15 +58,17 @@ Vagrant.configure("2") do |config|
       node.vm.provision :shell, :inline => "cp -fv /vagrant/provisioning/data/hosts /etc/hosts"
       node.vm.provision :shell, :inline => "apt-get update"
       node.vm.provision :shell, :inline => "apt-get --yes --force-yes install puppet"
-      
-      ['puppetlabs-java', 'kupferk-zookeeper', 'kupferk-storm'].each do |modulename|
-          node.vm.provision :shell, :inline => "puppet module install %s || puppet module upgrade %s || true" % [modulename, modulename]
-      end
+
+      # install librarian-puppet and run it to install puppet common modules.
+      # This has to be done before puppet provisioning so that modules are available
+      # when puppet tries to parse its manifests
+      config.vm.provision :shell, :path => "provision/shell/main.sh"
       
       node.vm.provision :puppet do |puppet|
-    	puppet.manifests_path = "provisioning/manifests"
-    	puppet.manifest_file = "provision.pp"
-    	puppet.options = "--verbose --debug"
+    	puppet.manifests_path = "provisioning/puppet/manifests"
+        puppet.manifest_file = 'site.pp'
+        puppet.module_path = [ 'provisioning/puppet/modules-contrib', 'provisioning/puppet/modules' ]
+        puppet.options = "--verbose --debug"
   	  end
     end
   end
