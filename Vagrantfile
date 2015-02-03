@@ -55,7 +55,7 @@ Vagrant.configure("2") do |config|
       end
 
       node.vm.provision :shell, :inline => "hostname %s" % opts[:name].to_s
-      node.vm.provision :shell, :inline => "cp -fv /vagrant/data/hosts /etc/hosts"
+      node.vm.provision :shell, :inline => "cp -fv /vagrant/provisioning/data/hosts /etc/hosts"
       node.vm.provision :shell, :inline => "apt-get update"
       node.vm.provision :shell, :inline => "apt-get --yes --force-yes install puppet"
       
@@ -64,9 +64,8 @@ Vagrant.configure("2") do |config|
       end
       
       node.vm.provision :puppet do |puppet|
-    	puppet.manifests_path = "manifests"
+    	puppet.manifests_path = "provisioning/manifests"
     	puppet.manifest_file = "provision.pp"
-    	puppet.hiera_config_path = "hiera.yaml"
     	puppet.options = "--verbose --debug"
   	  end
     end

@@ -1,8 +1,0 @@
----
-:hierarchy:
-    - "%{operatingsystem}"
-    - storm
-:backends:
-    - yaml
-:yaml:
-    :datadir: '/vagrant/hieradata'
