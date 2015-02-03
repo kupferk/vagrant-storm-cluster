@@ -15,7 +15,7 @@ class { 'storm':
     zookeeper_servers => ['zookeeper1'],
     drpc_servers => ['supervisor1', 'supervisor2'],
     nimbus_host => 'nimbus',
-    supervisor_workers => '50'
+    supervisor_workers => '4'
 }
 
 node 'nimbus' {
