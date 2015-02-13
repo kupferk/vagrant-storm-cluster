@@ -4,6 +4,16 @@
 package {puppet:ensure=> [latest,installed]}
 package {ruby:ensure=> [latest,installed]}
 
+
+# Perform some preparations
+stage { 'init':
+  before => Stage['main'],  
+}
+class { '::osfixes::ubuntu::hosts':
+  stage => init
+}
+
+
 # Make sure Java is installed on hosts, select specific version
 class { 'java':
     distribution => 'jre'

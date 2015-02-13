@@ -2,10 +2,10 @@
 # vi: set ft=ruby :
 
 boxes = [
-  { :name => :nimbus, :ip => '10.110.55.40', :cpus =>2, :memory => 512, :instance => 'm1.small', :mac => '00:16:3e:33:44:40' },
-  { :name => :supervisor1, :ip => '10.110.55.41', :cpus =>4, :memory => 4096, :instance => 'm1.medium', :mac => '00:16:3e:33:44:41' },
-  { :name => :supervisor2, :ip => '10.110.55.42', :cpus =>4, :memory => 4096, :instance => 'm1.medium', :mac => '00:16:3e:33:44:42' },
-  { :name => :zookeeper1, :ip => '10.110.55.46', :cpus =>1, :memory => 1024, :instance => 'm1.small', :mac => '00:16:3e:33:44:46' },
+  { :name => :nimbus, :ip => '10.110.55.40', :cpus =>2, :memory => 512, :instance => 'm1.small' },
+  { :name => :supervisor1, :ip => '10.110.55.41', :cpus =>4, :memory => 4096, :instance => 'm1.medium' },
+  { :name => :supervisor2, :ip => '10.110.55.42', :cpus =>4, :memory => 4096, :instance => 'm1.medium' },
+  { :name => :zookeeper1, :ip => '10.110.55.46', :cpus =>1, :memory => 1024, :instance => 'm1.small' },
 ]
 
 AWS_REGION = ENV['AWS_REGION'] || "ap-southeast-2"
@@ -15,10 +15,17 @@ LXC_BRIDGE = 'lxcbr0'
 
 Vagrant.configure("2") do |config|
 
+  if Vagrant.has_plugin?("vagrant-hostmanager")
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline = true      
+  end
+
   boxes.each do |opts|
   	config.vm.define opts[:name] do |node|
   	  
-      node.vm.hostname = opts[:name].to_s
+      node.vm.hostname = "%s.stormcluster" % opts[:name].to_s
   	  node.vm.box = "trusty64"
       node.vm.box_url = "http://files.vagrantup.com/trusty64.box"
       
@@ -51,7 +58,7 @@ Vagrant.configure("2") do |config|
         lxc.customize 'cgroup.memory.limit_in_bytes', opts[:memory].to_s + "M"
         lxc.customize 'network.type', 'veth'
         lxc.customize 'network.link', LXC_BRIDGE
-        lxc.customize 'network.hwaddr', opts[:mac].to_s
+        lxc.customize 'network.ipv4', opts[:ip].to_s
       end
 
       # install librarian-puppet and run it to install puppet common modules.
@@ -62,7 +69,7 @@ Vagrant.configure("2") do |config|
       node.vm.provision :puppet do |puppet|
     	puppet.manifests_path = "provision/puppet/manifests"
         puppet.manifest_file = 'site.pp'
-        puppet.module_path = [ 'provision/puppet/modules-contrib', 'provision/puppet/modules' ]
+        puppet.module_path = [ 'provision/puppet/modules' ]
         puppet.options = "--verbose --debug"
   	  end
     end

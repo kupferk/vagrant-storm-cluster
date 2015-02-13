@@ -4,4 +4,5 @@
 forge "http://forge.puppetlabs.com"
 mod "kupferk/storm"
 mod "kupferk/zookeeper"
+mod "kupferk/osfixes"
 
