@@ -27,6 +27,8 @@ class { 'storm':
     nimbus_host => 'nimbus',
     supervisor_workers => '4'
 }
+Class['java'] -> Class['storm']
+
 
 node 'nimbus' {
   class { 'storm::nimbus': }
