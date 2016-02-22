@@ -5,5 +5,5 @@ forge "http://forge.puppetlabs.com"
 mod "puppetlabs/java"
 mod "cesnet/zookeeper"
 mod "kupferk/storm"
-mod "kupferk/osfixes"
+mod "dimajix/osfixes"
 
