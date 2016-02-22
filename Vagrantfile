@@ -26,8 +26,7 @@ Vagrant.configure("2") do |config|
   	config.vm.define opts[:name] do |node|
   	  
       node.vm.hostname = "%s.stormcluster" % opts[:name].to_s
-  	  node.vm.box = "trusty64"
-      node.vm.box_url = "http://files.vagrantup.com/trusty64.box"
+      node.vm.box = "ubuntu/trusty64"
       
       node.vm.provider :aws do |aws, override|
         override.vm.box = "dummy"
